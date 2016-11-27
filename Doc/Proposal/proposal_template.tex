@@ -1,0 +1,77 @@
+\documentclass[a4paper, 12pt]{article}
+%\usepackage{enumerate}
+\usepackage{graphicx}
+ \usepackage{url} % allow url in bibtex
+
+\title{CS412 - Project Plan\\ Face expression recognition (1)}
+\date{\today}
+
+\begin{document}
+
+\begin{center} 
+\large VNUHCM - University of Science\\
+Faculty of Information Technology\\
+Advanced Program in Computer Science
+\end{center}
+
+\begingroup
+\let\newpage\relax
+\maketitle
+\endgroup
+
+\textbf{Group members:}
+\begin{enumerate}
+	\item 1351040 : Thai Thien
+	\item 1351059 : Ho Ngoc Huynh Mai
+\end{enumerate}
+
+\section{Introduction}
+
+We choose to do Face expression recognition. Our implement will based on paper Robust Facial Expression Classification Using Shape and Appearance Features of SL Happy and Aurobinda Routray \cite{7050661}. We adopt the preprocessing process, the feature extraction. But we do not intend to work on extract active patches. For the model, we plan to implement 2 model, a Support Vector Machine (as in \cite{7050661}) and a simple Neural network.      
+
+\section{Project Details}
+The purpose of this project is implement the system to recognize facial expression, including, but not limited to anger, disgust, fear, happiness, sadness and surprise. \\
+Input: A face of someone. \\
+Output: The facial expression. \\ 
+
+We plan to do the project in 2 state. At first, we follow the tutorial, use pre-implement function (such as cv2.goodFeaturesToTrack()) and simple model to get the code run and solve the problem. Then, we implement LBP, PHOG, SVM as in \cite{7050661} as well as improve the neural network.
+\subsection{Theory}
+Face expression recognition is a machine learning classification problems.   
+\subsection{Methodology}
+\subsubsection{Preprocessing}
+\begin{itemize}
+	\item Noise filter using Gaussian kernel
+	\item Face detection using Haar Cascades (have been implemented in Opencv2) \cite{Haar}
+	\item Extract the face then resize to 96x96
+\end{itemize}
+\subsubsection{Feature selection}
+	This step we select feature to represent image. 
+	For basic level, we try to implement the basic feature selection base on Open CV tutorial, such as Harris Corner Detection, Shi-Tomasi Corner Detector, Good Features to Track. 
+	Then, we try to implement Local binary patterns (LBP) and pyramid of histogram of gradients (PHOG). 
+	
+\subsubsection{The model}
+	The model is a classifier model, which take feature vector as a input and output the class it belong to. There are 6 classes anger, disgust, fear, happiness, sadness and surprise.
+	
+	For basic level, we implement a neural net, multi-layer perceptrons as the tutorial \cite{mlp}.
+	
+	Then, we implement the One-Against-One Support Vector Machine. We need total 15 OAO SVM for 6 classes.
+	
+
+\subsection{Data, Scenarios, and Models}
+Dataset: Cohn-Kanade (CK and CK+) database \cite{5543262}
+
+%\subsubsection*{Policy applications: \ldots}
+\subsection{Time plan for project}
+week 1: Get used to OpenCV\\
+week 2: Do the preprocessing \\
+week 3: Feature selection (simple one)\\
+week 4: Implement the very simple classifier. \\
+Week 5: Try to put thing together and make it run. \\
+Week 6: Improve feature selection (using idea in \cite{7050661} ) \\
+Week 7: Implement SVM as in \cite{7050661}\\
+
+\bibliographystyle{ieeetr}
+\bibliography{Bibtex}
+
+\end{document}
+
