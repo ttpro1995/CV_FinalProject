@@ -1,10 +1,9 @@
 import numpy as np
-
 import cv2
 
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-filename = 'face.tiff'
-img = cv2.imread('face.tiff')
+filename = 'KA.AN1.39.tiff'
+img = cv2.imread(filename)
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
