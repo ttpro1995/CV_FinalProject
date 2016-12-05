@@ -2,13 +2,14 @@
 
 import cv2
 import copyright
+import numpy as np
 from os import listdir
 from os.path import isfile, join
 
 class PreProcessor:
     def __init__(self, pretrain_dataset):
         self.face_cascade = cv2.CascadeClassifier(pretrain_dataset)
-
+        self.kernel = np.ones((5, 5), np.float32) / 25
     '''
     Convert image to black scale
     detect face in image
@@ -17,7 +18,8 @@ class PreProcessor:
     def process_file(self, filename):
         print ('process file ', filename)
         img = cv2.imread(filename)
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Color -> grayscale
+        gray = cv2.GaussianBlur(gray,(5,5),1)  # blur gaussian
         ret = []
         faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)
         for (x, y, w, h) in faces:
