@@ -1,4 +1,6 @@
 nothinghere/
+RawData/
+ProcessedData/
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -249,3 +251,4 @@ crashlytics-build.properties
 fabric.properties
 playground/
 .idea/
+*.pyc

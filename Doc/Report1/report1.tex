@@ -90,6 +90,15 @@ We create the region of interest (ROI) from the face position detected by Haar c
 	For basic level, we try to implement the basic feature selection base on Open CV tutorial, such as Harris Corner Detection, Shi-Tomasi Corner Detector, Good Features to Track. 
 	Then, we try to implement Local binary patterns (LBP) and pyramid of histogram of gradients (PHOG). 
 	
+	For Local binary patterns (LBP), we use scikit-image library \cite{van2014scikit}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{./figure/scikit_image_lbp.png}
+	\caption[]{Local binary patterns (LBP)}
+	\label{fig:lbp}
+	\end{figure}
+		
 \subsection{The model}
 	The model is a classifier model, which take feature vector as a input and output the class it belong to. There are 6 classes anger, disgust, fear, happiness, sadness and surprise.
 	
