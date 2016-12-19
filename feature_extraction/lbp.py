@@ -4,6 +4,19 @@ import numpy as np
 import cv2
 
 class LBP:
+    def compute_img(self, img):
+        img = np.asarray(img)
+        img = (1 << 7) * (img[0:-2, 0:-2] >= img[1:-1, 1:-1]) \
+            + (1 << 6) * (img[0:-2, 1:-1] >= img[1:-1, 1:-1]) \
+            + (1 << 5) * (img[0:-2, 2:] >= img[1:-1, 1:-1]) \
+            + (1 << 4) * (img[1:-1, 2:] >= img[1:-1, 1:-1]) \
+            + (1 << 3) * (img[2:, 2:] >= img[1:-1, 1:-1]) \
+            + (1 << 2) * (img[2:, 1:-1] >= img[1:-1, 1:-1]) \
+            + (1 << 1) * (img[2:, :-2] >= img[1:-1, 1:-1]) \
+            + (1 << 0) * (img[1:-1, :-2] >= img[1:-1, 1:-1])
+        hist = np.histogram(img, bins=range(257))
+        return hist[0]
+
     def compute(self, img, keypoints):
         img = np.asarray(img)
         img = (1 << 7) * (img[0:-2, 0:-2] >= img[1:-1, 1:-1]) \
