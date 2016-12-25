@@ -1,5 +1,3 @@
-from detector import Detector
-from lbp import LBP
 import cv2
 from skimage.feature import local_binary_pattern
 import numpy as np
@@ -9,8 +7,6 @@ BLOB = 'blob'
 DOG = 'dog'
 class FeatureExtractor:
     def __init__(self):
-        self._lbp = LBP()
-        self._detector = Detector()
         self.radius = 3
         self.n_point = self.radius*8
         self.METHOD = 'uniform'
