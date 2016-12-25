@@ -44,9 +44,18 @@ def evaluate_classifier(clf, X_train, X_test, y_train, y_test):
 
 
 def main():
-    CASCADE_CLASSIFIER_FILE = 'haarcascade_frontalface_default.xml'
-    #m_pre = PreProcessor(CASCADE_CLASSIFIER_FILE)
-    #m_pre.preprocess('./RawData', './ProcessedData')
+
+    '''
+     Prerpocessing:
+     Crop face in each raw data image and resize to 96x96
+     The preprocessed image are saved into ./PreprocessedData
+    '''
+    # Uncomment this block to do preprocessing
+    # CASCADE_CLASSIFIER_FILE = 'haarcascade_frontalface_default.xml'
+    # m_pre = PreProcessor(CASCADE_CLASSIFIER_FILE)
+    # m_pre.preprocess('./RawData', './ProcessedData')
+    ######################################################################
+
     data = []
     labels = []
     if os.path.isfile(dataset_path):
@@ -66,7 +75,6 @@ def main():
             labels.append(label)
         np.savez(dataset_path, data=data, labels = labels)
 
-    # data = normalize(data, norm='l1', axis=0)
 
     X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size = 0.20)
 
@@ -74,9 +82,18 @@ def main():
     # Set the parameters by cross-validation
     tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3, 1e4, 1e5 ],
                          'C': [1, 10, 100, 1000, 10000, 100000], 'decision_function_shape':['ovo']},
-                        {'kernel': ['linear'], 'C': [1, 10, 100, 1000,10000, 100000], 'decision_function_shape':['ovo']}]
+                        {'kernel': ['linear'], 'C': [1, 10, 100, 1000,10000, 100000], 'decision_function_shape':['ovo']}
+                        ]
 
+    tuned_param_rbf = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3, 1e4, 1e5 ],
+                         'C': [1, 10, 100, 1000, 10000, 100000], 'decision_function_shape':['ovo']}
+                        ]
+
+    tuned_param_linear = [{'kernel': ['linear'], 'C': [1, 10, 100, 1000,10000, 100000], 'decision_function_shape':['ovo']}]
+
+    tuned_params = [tuned_param_linear, tuned_param_rbf]
     scores = ['precision', 'recall']
+    score = 'recall'
 
     # train svm
     #clf = svm.SVC(C=1000, gamma=1, kernel='linear', decision_function_shape = 'ovo', verbose=False, class_weight='balanced')
@@ -85,13 +102,15 @@ def main():
     #print (clf.n_support_.shape)
     #evaluate_classifier(clf, X_train, X_test, y_train, y_test)
 
-    for score in scores:
+    # for score in scores:
+    for tuned in tuned_params:
         print ('######################')
-        print("# Tuning hyper-parameters for %s" % score)
+        print("# Tuning hyper-parameters for %s using kernel %s" % (score ,tuned[0]['kernel']))
         print()
 
-        clf = GridSearchCV(svm.SVC(C=1), tuned_parameters, cv=5,
-                           scoring='%s_macro' % score)
+        clf = GridSearchCV(svm.SVC(C=1), tuned, cv=5,
+                          scoring='%s_macro' % score)
+
         clf.fit(X_train, y_train)
 
         print("Best parameters set found on development set:")
