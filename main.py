@@ -88,10 +88,14 @@ def main():
     tuned_param_rbf = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3, 1e4, 1e5 ],
                          'C': [1, 10, 100, 1000, 10000, 100000], 'decision_function_shape':['ovo']}
                         ]
+    tuned_params_poly = [{'kernel': ['poly'], 'gamma': [1e-3, 1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3, 1e4, 1e5 ],
+                         'C': [1, 10, 100, 1000, 10000, 100000], 'decision_function_shape':['ovo'],
+                          'degree':[1,2,3]}
+                        ]
 
     tuned_param_linear = [{'kernel': ['linear'], 'C': [1, 10, 100, 1000,10000, 100000], 'decision_function_shape':['ovo']}]
 
-    tuned_params = [tuned_param_linear, tuned_param_rbf]
+    tuned_params = [tuned_param_linear, tuned_param_rbf, tuned_params_poly]
     scores = ['precision', 'recall']
     score = 'recall'
 
@@ -102,39 +106,39 @@ def main():
     #print (clf.n_support_.shape)
     #evaluate_classifier(clf, X_train, X_test, y_train, y_test)
 
-    # for score in scores:
-    for tuned in tuned_params:
-        print ('######################')
-        print("# Tuning hyper-parameters for %s using kernel %s" % (score ,tuned[0]['kernel']))
-        print()
+    for score in scores:
+        for tuned in tuned_params:
+            print ('###############################################################')
+            print("# Tuning hyper-parameters for %s using kernel %s" % (score ,tuned[0]['kernel']))
+            print()
 
-        clf = GridSearchCV(svm.SVC(C=1), tuned, cv=5,
-                          scoring='%s_macro' % score)
+            clf = GridSearchCV(svm.SVC(C=1), tuned, cv=5,
+                              scoring='%s_macro' % score)
 
-        clf.fit(X_train, y_train)
+            clf.fit(X_train, y_train)
 
-        print("Best parameters set found on development set:")
-        print()
-        print(clf.best_params_)
-        print()
-        print("Grid scores on development set:")
-        print()
-        means = clf.cv_results_['mean_test_score']
-        stds = clf.cv_results_['std_test_score']
-        for mean, std, params in zip(means, stds, clf.cv_results_['params']):
-            print("%0.3f (+/-%0.03f) for %r"
-                  % (mean, std * 2, params))
-        print()
+            print("Best parameters set found on development set:")
+            print()
+            print(clf.best_params_)
+            print()
+            print("Grid scores on development set:")
+            print()
+            means = clf.cv_results_['mean_test_score']
+            stds = clf.cv_results_['std_test_score']
+            for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+                print("%0.3f (+/-%0.03f) for %r"
+                      % (mean, std * 2, params))
+            print()
 
-        print("Detailed classification report:")
-        print()
-        print("The model is trained on the full development set.")
-        print("The scores are computed on the full evaluation set.")
-        print()
-        y_true, y_pred = y_test, clf.predict(X_test)
-        print(classification_report(y_true, y_pred))
-        evaluate_classifier(clf,X_train,X_test,y_train,y_test)
-        print()
+            print("Detailed classification report:")
+            print()
+            print("The model is trained on the full development set.")
+            print("The scores are computed on the full evaluation set.")
+            print()
+            y_true, y_pred = y_test, clf.predict(X_test)
+            print(classification_report(y_true, y_pred))
+            evaluate_classifier(clf,X_train,X_test,y_train,y_test)
+            print('###################################################')
 
     print ('breakpoint')
 
