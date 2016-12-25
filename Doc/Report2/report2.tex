@@ -123,11 +123,18 @@ We create the region of interest (ROI) from the face position detected by Haar c
 	
 	Then, we implement the One-Against-One Support Vector Machine. We need total 21 OAO SVM for 7 classes.
 	
-	We use scikit-learn to \cite{pedregosa2011scikit} implement our SVM model. 
+	We use scikit-learn to \cite{pedregosa2011scikit} implement our SVM model. We use 3 different kernel: linear, polynomial, rbf. For each kernel, we run hyperparameter tunning for recall and precision.
+	
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=1\linewidth]{./figure/experiment_result.png}
+			\caption[]{Experiment result}
+			\label{fig:result}
+		\end{figure}
 	
 
-\section{Data, Scenarios, and Models}
-Dataset: Cohn-Kanade (CK and CK+) \cite{5543262}, jaffe \cite{lyons1998japanese}
+\section{Dataset}
+Dataset:  jaffe \cite{lyons1998japanese}
 
 
 

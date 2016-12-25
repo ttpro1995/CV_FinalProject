@@ -49,8 +49,11 @@ def main():
      Prerpocessing:
      Crop face in each raw data image and resize to 96x96
      The preprocessed image are saved into ./PreprocessedData
+     raw image in ./RawData folder
+     processed image would be output to ./ProcessedData
+     Please create an empty ProcessedData folder if it is not exist
     '''
-    # Uncomment this block to do preprocessing
+    ### Uncomment this block to do preprocessing
     # CASCADE_CLASSIFIER_FILE = 'haarcascade_frontalface_default.xml'
     # m_pre = PreProcessor(CASCADE_CLASSIFIER_FILE)
     # m_pre.preprocess('./RawData', './ProcessedData')
