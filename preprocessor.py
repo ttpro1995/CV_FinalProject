@@ -9,18 +9,27 @@ import os.path
 
 class PreProcessor:
     def __init__(self, face_xml, eye_xml, mouth_xml, nose_xml):
+        """
+
+        :param face_xml: pretrain cascade classifier for face detection
+        :param eye_xml: pretrain cascade classifier for eye detection
+        :param mouth_xml: pretrain cascade classifier for mouth detection
+        :param nose_xml: pretrain cascade classifier for nose detection
+        """
+        self.FAILED_MOUTH = 'FAILED to detect MOUTH'
+        self.FAILED_EYE = 'FAILED to detect EYE'
+        self.FAILED_NOSE = 'FAILED to detect NOSE'
         self.face_cascade = cv2.CascadeClassifier(face_xml)
         self.eye_cascade = cv2.CascadeClassifier(eye_xml)
         self.nose_cascade = cv2.CascadeClassifier(nose_xml)
         self.mouth_cascade = cv2.CascadeClassifier(mouth_xml)
         self.kernel = np.ones((5, 5), np.float32) / 25
-    '''
-    Convert image to black scale
-    detect face in image
-    return a array of face size 96x96
-    '''
+
     def process_file(self, filename, size_dim, landmark = False):
         """
+        Convert image to black scale
+        detect face in image
+        return a array of face size 96x96
         :param filename: raw data file name
         :return:
         ret: an array each element is tuple (roi_face, roi_eyes, roi_nose, roi_mouth)
@@ -41,17 +50,26 @@ class PreProcessor:
             if (landmark):
                 # detect eye
                 eyes = self.eye_cascade.detectMultiScale(roi_gray)
+                if len(eyes) <2:
+                    return self.FAILED_EYE
+
                 for (ex, ey,ew,eh) in eyes:
                     roi_eye = roi_face[ey:ey + eh, ex:ex + ew]
                     roi_eyes.append(roi_eye)
 
                 # detect nose
                 nose = self.nose_cascade.detectMultiScale(roi_gray)
+                if len(nose) < 1:
+                    return self.FAILED_NOSE
+
                 nx, ny, nw, nh = nose[0]
                 roi_nose = roi_face[ny:ny + nh, nx:nx + nw]
 
                 # detect mouth
                 mouth = self.mouth_cascade.detectMultiScale(roi_gray)
+                if len(mouth) < 1:
+                    return self.FAILED_MOUTH
+
                 mx, my, mw, mh = mouth[0]
                 roi_mouth = roi_face[my:my + mh, mx:mx + mw]
 
@@ -97,11 +115,15 @@ class PreProcessor:
             os.makedirs(out_dir)
         inputs = [f for f in listdir(in_dir) if isfile(join(in_dir, f))]
         for filename in inputs:
+            outputs = self.process_file(in_dir+'/'+filename, size_dim=96, landmark=True)
+            if outputs == self.FAILED_MOUTH or outputs == self.FAILED_NOSE or outputs == self.FAILED_EYE:
+                print ('in %s, error %s'%(filename, outputs))
+                continue # whenever failed to detect all eyes, nose, mouth, skip picture
+
             name, extension = splitext(filename)
             subdir = out_dir+'/'+name # contain landmark
             if not os.path.exists(out_dir+'/'+name):
                 os.makedirs(out_dir+'/'+name)
-            outputs = self.process_file(in_dir+'/'+filename, size_dim=96, landmark=True)
             for roi_face, roi_eyes, roi_nose, roi_mouth in outputs:
                 cv2.imwrite(out_dir+'/'+filename, roi_face)
                 cv2.imwrite(subdir + '/' + 'eye0.tiff', roi_eyes[0])

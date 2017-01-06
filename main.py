@@ -19,6 +19,7 @@ import optunity.metrics
 from feature_extraction.extractor import FeatureExtractor
 
 PROCESSED_DATA_DIR = './ProcessedData'
+RAW_DATA_DIR = './RawData'
 dataset_path = 'numpy_dataset'
 FACE_XML = 'haarcascade_frontalface_default.xml'
 MOUTH_XML = 'haarcascade_mcs_mouth.xml'
@@ -60,7 +61,7 @@ def main():
     '''
     ### Uncomment this block to do preprocessing
     m_pre = PreProcessor(FACE_XML,EYE_XML,MOUTH_XML,NOSE_XML)
-    m_pre.preprocess('./RawData', './ProcessedData', size_dim=96)
+    m_pre.preprocess(RAW_DATA_DIR, PROCESSED_DATA_DIR, size_dim=96)
     ######################################################################
 
     data = []
