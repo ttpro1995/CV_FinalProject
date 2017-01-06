@@ -20,6 +20,11 @@ from feature_extraction.extractor import FeatureExtractor
 
 PROCESSED_DATA_DIR = './ProcessedData'
 dataset_path = 'numpy_dataset'
+FACE_XML = 'haarcascade_frontalface_default.xml'
+MOUTH_XML = 'haarcascade_mcs_mouth.xml'
+NOSE_XML = 'haarcascade_mcs_nose.xml'
+EYE_XML = 'haarcascade_eye.xml'
+
 
 def evaluate_classifier(clf, X_train, X_test, y_train, y_test):
     print (clf)
@@ -54,20 +59,20 @@ def main():
      Please create an empty ProcessedData folder if it is not exist
     '''
     ### Uncomment this block to do preprocessing
-    # CASCADE_CLASSIFIER_FILE = 'haarcascade_frontalface_default.xml'
-    # m_pre = PreProcessor(CASCADE_CLASSIFIER_FILE)
-    # m_pre.preprocess('./RawData', './ProcessedData')
+    m_pre = PreProcessor(FACE_XML,EYE_XML,MOUTH_XML,NOSE_XML)
+    m_pre.preprocess('./RawData', './ProcessedData', size_dim=96)
     ######################################################################
 
     data = []
     labels = []
     if os.path.isfile(dataset_path):
+        print ('load old feature')
         dataset = np.load(dataset_path)
         data = dataset['data']
         labels = dataset['labels']
-
     else:
         # extraction
+        print ('Extract feature')
         feature_extractor = FeatureExtractor()
         files = [f for f in listdir(PROCESSED_DATA_DIR) if isfile(join(PROCESSED_DATA_DIR, f))]
         for file in files:
