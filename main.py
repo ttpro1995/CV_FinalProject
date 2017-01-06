@@ -13,8 +13,6 @@ import sklearn.svm as svm
 from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import normalize
-import optunity
-import optunity.metrics
 
 from feature_extraction.extractor import FeatureExtractor
 
