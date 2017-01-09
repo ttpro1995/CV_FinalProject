@@ -1,6 +1,8 @@
 import cv2
 from skimage.feature import local_binary_pattern
 import numpy as np
+from os import listdir
+from os.path import isfile, join
 
 class FeatureExtractor:
     def __init__(self):
@@ -15,3 +17,16 @@ class FeatureExtractor:
         hist, _ = np.histogram(lbp, normed=True, bins=n_bins, range=(0, n_bins))
         return hist
 
+    def extract_group(self,folder):
+        """
+        Extract feature of whole folder (eyes, nose, mouth)
+        :param folder:
+        :return:
+        """
+        files = [f for f in listdir(folder) if isfile(join(folder, f))]
+        h = np.array([])
+        for file in files:
+            img = cv2.imread(folder + '/' + file)
+            hist = self.extract(img)
+            h = np.concatenate((h, hist))
+        return h
