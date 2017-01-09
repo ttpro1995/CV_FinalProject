@@ -23,8 +23,9 @@ install:
   - pip install -U pytest
   - pip install -U pyimgur
   - pip install -U sklearn
-  - pip install -U skimage
+  - pip install -U scikit-image
 
 script:
   # Your test script goes here
   - python main.py
+  - python main_landmark.py

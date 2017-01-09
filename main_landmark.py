@@ -16,13 +16,16 @@ from sklearn.preprocessing import normalize
 
 from feature_extraction.extractor import FeatureExtractor
 
-PROCESSED_DATA_DIR = './ProcessedData'
+PROCESSED_GROUP_DATA_DIR = './ProcessedDataGroup'
 RAW_DATA_DIR = './RawData'
 dataset_path = 'numpy_dataset'
 FACE_XML = 'haarcascade_frontalface_default.xml'
 MOUTH_XML = 'haarcascade_mcs_mouth.xml'
 NOSE_XML = 'haarcascade_mcs_nose.xml'
 EYE_XML = 'haarcascade_eye.xml'
+
+
+
 
 
 def evaluate_classifier(clf, X_train, X_test, y_train, y_test):
@@ -58,28 +61,28 @@ def main():
      Please create an empty ProcessedData folder if it is not exist
     '''
     ### Uncomment this block to do preprocessing
-    m_pre = PreProcessor(FACE_XML,EYE_XML,MOUTH_XML,NOSE_XML)
-    m_pre.preprocess(RAW_DATA_DIR, PROCESSED_DATA_DIR, size_dim=96)
+    # m_pre = PreProcessor(FACE_XML,EYE_XML,MOUTH_XML,NOSE_XML)
+    # m_pre.preprocess(RAW_DATA_DIR, PROCESSED_GROUP_DATA_DIR, size_dim=96)
+    # m_pre.preprocess_landmark(RAW_DATA_DIR, PROCESSED_GROUP_DATA_DIR)
     ######################################################################
 
     data = []
     labels = []
-    # if os.path.isfile(dataset_path):
+    #if os.path.isfile(dataset_path):
     if (False):
         print ('load old feature')
         dataset = np.load(dataset_path)
         data = dataset['data']
         labels = dataset['labels']
     else:
-        # extraction
+        # extraction feature of each part (eyes, nose, mouth and concat feature vector)
         print ('Extract feature')
         feature_extractor = FeatureExtractor()
-        files = [f for f in listdir(PROCESSED_DATA_DIR) if isfile(join(PROCESSED_DATA_DIR, f))]
-        for file in files:
-            img = cv2.imread(PROCESSED_DATA_DIR+'/'+file)
-            feaVec = feature_extractor.extract(img)
+        folders = [f for f in listdir(PROCESSED_GROUP_DATA_DIR) if os.path.isdir(PROCESSED_GROUP_DATA_DIR+"/"+f)]
+        for folder in folders:
+            feaVec = feature_extractor.extract_group(PROCESSED_GROUP_DATA_DIR+"/"+folder)
             data.append(feaVec)
-            label = util.jaffe_labeling(file)
+            label = util.jaffe_labeling(folder)
             labels.append(label)
         # np.savez(dataset_path, data=data, labels = labels)
 

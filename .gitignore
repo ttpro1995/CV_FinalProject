@@ -253,3 +253,5 @@ playground/
 .idea/
 *.pyc
 SUBMIT/
+ProcessedDataGroup/
+SmallOutput/

@@ -23,7 +23,8 @@ class FeatureExtractor:
         :param folder:
         :return:
         """
-        files = [f for f in listdir(folder) if isfile(join(folder, f))]
+        f = listdir(folder)
+        files = [f for f in listdir(folder) if isfile(folder+"/"+f)]
         h = np.array([])
         for file in files:
             img = cv2.imread(folder + '/' + file)
