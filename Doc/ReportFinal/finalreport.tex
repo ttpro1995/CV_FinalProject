@@ -1,0 +1,199 @@
+\documentclass[a4paper, 12pt]{article}
+%\usepackage{enumerate}
+\usepackage{graphicx}
+ \usepackage{url} % allow url in bibtex
+\usepackage{float} % force picture to place [H] HERE
+
+ \usepackage{graphicx} %load package for graphic
+  \usepackage{subcaption} % two figure side by side
+ 
+ \usepackage{indentfirst} % indent the first paragraph in section
+ 
+\title{CS412 - Final Report\\ Face expression recognition}
+\date{\today}
+
+\begin{document}
+
+\begin{center} 
+\large VNUHCM - University of Science\\
+Faculty of Information Technology\\
+Advanced Program in Computer Science
+\end{center}
+
+\begingroup
+\let\newpage\relax
+\maketitle
+\endgroup
+
+\textbf{Group members:}
+\begin{enumerate}
+	\item 1351040 : Thai Thien
+	\item 1351059 : Ho Ngoc Huynh Mai
+\end{enumerate}
+
+\section{Introduction}
+
+We choose to do Face expression recognition. Our implement will based on paper Robust Facial Expression Classification Using Shape and Appearance Features of SL Happy and Aurobinda Routray \cite{7050661}. We adopt the preprocessing process, the feature extraction. But we do not intend to work on extract active patches. For the model, we plan to implement 2 model, a Support Vector Machine (as in \cite{7050661}) and a simple Neural network.      
+
+\section{Project Details}
+The purpose of this project is implement the system to recognize facial expression, including, but not limited to anger, disgust, fear, happiness, sadness and surprise. \\
+Input: A face of someone. \\
+Output: The facial expression. \\ 
+
+\section{Methodology}
+
+\subsection{Preprocessing}
+\label{sec:preprocessing}
+
+\subsubsection{Gaussian blur}
+\label{sec:preprocessing_blur}
+By default, Opencv load image with BGR channel. We convert image to grayscale. Then apply Gaussian Blur with kernel size 5x5 and $\sigma$ = 1 to filter out noise.
+
+\subsubsection{Face Detection}
+\label{sec:preprocessing_face_detect}
+The purpose of this step is to detect the face in input image. We use image which is smoothed from the step above as input for face detection. We use Haar feature-based cascade classifiers \cite{viola2001rapid} for face detection.
+
+We use pre-trained data provided by OpenCV \cite{bradski2000opencv} haarcascade\_frontalface\_default.xml. 
+
+\subsubsection{Extract and resize}
+\label{sec:preprocessing_resize}
+We create the region of interest (ROI) from the face position detected by Haar classifiers. We create new image from region of interest and resize the image to 96x96.
+
+\subsubsection{Result}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.4\textwidth}
+		\includegraphics[width=0.9\textwidth]{./raw/img1.png}
+	\end{subfigure}
+	%
+	\begin{subfigure}[b]{0.4\textwidth}
+		\includegraphics[width=0.9\textwidth]{./raw/img2.png}
+	\end{subfigure}
+	\caption[]{Before preprocessing}
+	\label{fig:beforepre}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.4\textwidth}
+		\includegraphics[width=0.9\textwidth]{./processed/img1.png}
+	\end{subfigure}
+	%
+	\begin{subfigure}[b]{0.4\textwidth}
+		\includegraphics[width=0.9\textwidth]{./processed/img2.png}
+	\end{subfigure}
+	\caption[]{After preprocessing}
+	\label{fig:afterpre}
+\end{figure}
+	
+\subsubsection{Detect and extract facial patches}
+\label{sec:preprocessing_facial_patches}
+We use Haar feature-based cascade classifiers \cite{viola2001rapid} with Opencv  \cite{bradski2000opencv} pretrained classifiers for eyes, nose and mouth. For each face, we extract two eyes, one nose, one mouth and save to same folder. For face we cannot extract 4 patches, we discard that sample.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{./raw/KAAN139.png}
+	\caption[]{original image}
+	\label{fig:lbp_to_output}
+	\cite{lbptutorial}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.2\textwidth}
+		\includegraphics[width=0.9\textwidth]{./processed/eye0.png}
+	\end{subfigure}
+	%
+	\begin{subfigure}[b]{0.2\textwidth}
+		\includegraphics[width=0.9\textwidth]{./processed/eye1.png}
+	\end{subfigure}
+	%
+	\begin{subfigure}[b]{0.2\textwidth}
+		\includegraphics[width=0.9\textwidth]{./processed/nose.png}
+	\end{subfigure}
+	%
+	\begin{subfigure}[b]{0.2\textwidth}
+		\includegraphics[width=0.9\textwidth]{./processed/mouth.png}
+	\end{subfigure}
+	\caption[]{Facial Patches}
+	\label{fig:beforepre}
+\end{figure}
+
+
+\subsection{Feature selection}
+
+	This step we select feature to represent image. 
+	
+	Local Binary Pattern (lbp) is a type of texture descriptor\cite{pietikainen2010local}. 
+	
+	Before construct lbp, the image must be convert into gray-scale. We already did that in \ref{sec:preprocessing}
+	
+	For each pixel in our image, we consider 8 neighbor pixels.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\linewidth]{./figure/lbp_thresholding.jpg}
+		\caption[]{Local binary patterns (LBP)}
+		\label{fig:lbp}
+		\cite{lbptutorial}
+	\end{figure}
+	We compare the intensitiy of the center pixel with its neighbor. Whenever the intensity of a neighbor pixel is greater or equal the middle pixel, we set to 1, else we set to 0. Then we take 8 bit represent of neighbor pixels and convert it into decimal representation. For example, in \textbf{figure \ref{fig:lbp}}, we have $0010111_2$ = $23_10$. Then we can store the values in another 2D array as in \textbf{figure \ref{fig:lbp_to_output}}. There are 8 neighbors pixels, therefore, there are $2^8 = 256$ different pattern of lbp. 
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\linewidth]{./figure/lbp_to_output.jpg}
+		\caption[]{Local binary patterns (LBP)}
+		\label{fig:lbp_to_output}
+		\cite{lbptutorial}
+	\end{figure}
+	
+	Finally, we calculate the histogram of each pattern occur. We treat this histogram as our feature vector.
+	
+	For Local binary patterns histogram (lbph) implementation, we use scikit-image library \cite{van2014scikit}
+	
+	\subsubsection{Feature extraction for full face}
+	\label{sec:extract_full}
+	We take a full face after preprocessed in \ref{sec:preprocessing_blur}, \ref{sec:preprocessing_face_detect}, \ref{sec:preprocessing_resize}. Then we extract lbph feature from that image to make feature vector of a sample. 
+	
+	\subsubsection{Feature extraction for facial patches}
+	\label{sec:extract_patches}
+	For each sample image, apply preprocess in \ref{sec:preprocessing_blur}, \ref{sec:preprocessing_face_detect}, \ref{sec:preprocessing_resize} and \ref{sec:preprocessing_facial_patches} to get 4 patches. Then we extract lbph feature for each patches. We concatenate feature vectors of each patches to create feature vector of a sample.
+	
+		
+\subsection{The model}
+\subsubsection{Support Vector Machine}
+\label{sec:model_svm}
+	The model is a classifier model, which take feature vector as a input and output the class it belong to. There are 6 classes anger, disgust, fear, happiness, sadness, surprise and neutral.
+	
+	Then, we implement the One-Against-One Support Vector Machine. We need total 21 OAO SVM for 7 classes.
+	
+	We use scikit-learn to \cite{pedregosa2011scikit} implement our SVM model. We use 3 different kernel: linear, polynomial, rbf. For each kernel, we run hyperparameter tunning for recall and precision.
+
+\subsection{Experiment result}
+		\subsubsection{Experiment 1}
+		We set up the experiment for \ref{sec:preprocessing_blur}, \ref{sec:preprocessing_face_detect}, \ref{sec:preprocessing_resize}, \ref{sec:extract_full}, \ref{sec:model_svm}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=1\linewidth]{./figure/experiment_result.png}
+			\caption[]{Experiment result full face}
+			\label{fig:result}
+		\end{figure}
+	
+		\subsubsection{Experiment 2}
+			We set up the experiment for \ref{sec:preprocessing_blur}, \ref{sec:preprocessing_face_detect}, \ref{sec:preprocessing_resize}, \ref{sec:preprocessing_facial_patches}, \ref{sec:extract_patches}, \ref{sec:model_svm}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=1\linewidth]{./figure/experiment2.png}
+				\caption[]{Experiment result facial patches}
+				\label{fig:result2}
+			\end{figure}
+		
+\section{Dataset}
+Dataset:  jaffe \cite{lyons1998japanese}
+
+
+
+\bibliographystyle{ieeetr}
+\bibliography{Bibtex}
+
+\end{document}
+
