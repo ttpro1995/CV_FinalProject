@@ -58,12 +58,14 @@ def main():
      The preprocessed image are saved into ./PreprocessedData
      raw image in ./RawData folder
      processed image would be output to ./ProcessedData
-     Please create an empty ProcessedData folder if it is not exist
+     Please create an empty ProcessedDataGroup folder if it is not exist
     '''
+
+    print ('pictures => faces => patches => extract feature => svm')
     ### Uncomment this block to do preprocessing
-    # m_pre = PreProcessor(FACE_XML,EYE_XML,MOUTH_XML,NOSE_XML)
-    # m_pre.preprocess(RAW_DATA_DIR, PROCESSED_GROUP_DATA_DIR, size_dim=96)
-    # m_pre.preprocess_landmark(RAW_DATA_DIR, PROCESSED_GROUP_DATA_DIR)
+    m_pre = PreProcessor(FACE_XML,EYE_XML,MOUTH_XML,NOSE_XML)
+    m_pre.preprocess(RAW_DATA_DIR, PROCESSED_GROUP_DATA_DIR, size_dim=96)
+    m_pre.preprocess_landmark(RAW_DATA_DIR, PROCESSED_GROUP_DATA_DIR)
     ######################################################################
 
     data = []
